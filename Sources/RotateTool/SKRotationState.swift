@@ -24,7 +24,7 @@ struct SKRotationState: Equatable {
     private let circles = SKCircle3D.all
     
     var transformedCircles: [SKCircle3D] {
-        circles.map { $0 * rotator.transform }
+        circles.map { $0.applying(rotator.transform, lineWidth: lineWidth) }
     }
     
     var lineWidth: CGFloat { drawer.lineWidth }
@@ -53,7 +53,11 @@ struct SKRotationState: Equatable {
     mutating func applyGesture(_ gesture: SKGesture) {
         switch gesture {
         case .dragging(let point):
-            rotator.rotate(point)
+            if !isRotating {
+                highlightAxis(point)
+            } else {
+                rotator.rotate(point)
+            }
         case .endDragging:
             rotator.finishRotating()
         case .moving(let point):

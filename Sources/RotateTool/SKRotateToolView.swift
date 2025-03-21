@@ -61,7 +61,7 @@ public struct SKRotateToolView: View {
 #endif
             }
             .gesture(
-                DragGesture(coordinateSpace: .global)
+                DragGesture(coordinateSpace: .local)
                     .onChanged { value in
                         rotationState.applyGesture(.dragging(value.location))
                     }
@@ -108,7 +108,30 @@ public extension View {
 #Preview {
     @Previewable @State var rotation = Rotation3D()
     
-    Circle()
-        .rotatable($rotation)
+    ZStack {
+        Circle()
+            .fill(.blue)
+        
+        GeometryReader { proxy in
+            let sideSize = min(proxy.size.width, proxy.size.height)
+            let offset = CGSize(
+                width: (proxy.size.width - sideSize).half,
+                height: (proxy.size.height - sideSize).half
+            )
+            
+            Path { path in
+                path.move(to: .init(x: offset.width, y: offset.height + sideSize.half))
+                path.addLine(to: .init(x: offset.width + sideSize, y: offset.height + sideSize.half))
+            }
+            .stroke(Color.red, lineWidth: 3)
+            
+            Path { path in
+                path.move(to: .init(x: offset.width + sideSize.half, y: offset.height))
+                path.addLine(to: .init(x: offset.width + sideSize.half, y: offset.height + sideSize))
+            }
+            .stroke(Color.green, lineWidth: 3)
+        }
+    }
+    .rotatable($rotation)
 }
 

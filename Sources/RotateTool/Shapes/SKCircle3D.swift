@@ -27,11 +27,11 @@ struct SKCircle3D: Equatable {
         semicircles.first(where: { $0.contains(point, lineWidth: lineWidth, mask: mask) })
     }
     
-    static func * (lhs: Self, rhs: AffineTransform3D) -> Self {
+    func applying(_ transform: AffineTransform3D, lineWidth: CGFloat) -> Self {
         Self(
-            backSemicircle: lhs.backSemicircle.applying(rhs),
-            frontSemicircle: lhs.frontSemicircle.applying(rhs),
-            lineWidth: lhs.lineWidth
+            backSemicircle: backSemicircle.applying(transform),
+            frontSemicircle: frontSemicircle.applying(transform),
+            lineWidth: lineWidth
         )
     }
 }
